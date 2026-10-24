@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#f4a6c0">
+<title>محاضرات فاطمة</title>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
+<style>
+/* Layout: sticky top bar, bottom tab bar on phones, single 860px column of lecture cards, soft pink identity */
+:root{--bg:#fdf2f6;--card:#fff;--tx:#2d1520;--mu:#86596e;--bd:#f3d9e3;--soft:#fbe9f0;--pr:#c2457a;--prs:#fadbe8;--on:#fff;--s0:#b9a3ad;--s1:#f2a766;--s2:#a98be8;--s3:#ee6b9e;--onc:#3d1228;--toast:#2d1520;--toast-tx:#fff;
+  --font:'Tajawal',system-ui,'Segoe UI',Tahoma,sans-serif;direction:rtl;color-scheme:light}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--bg:#1a1016;--card:#25161e;--tx:#fbeaf1;--mu:#c9a6b5;--bd:#3a2430;--soft:#301d27;--pr:#f48fb1;--prs:#4a2236;--on:#3a0f22;--s0:#8a7480;--s1:#f6b57d;--s2:#c0a8f4;--s3:#f78db3;--onc:#2a0c1b;--toast:#fbeaf1;--toast-tx:#2a0c1b;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#1a1016;--card:#25161e;--tx:#fbeaf1;--mu:#c9a6b5;--bd:#3a2430;--soft:#301d27;--pr:#f48fb1;--prs:#4a2236;--on:#3a0f22;--s0:#8a7480;--s1:#f6b57d;--s2:#c0a8f4;--s3:#f78db3;--onc:#2a0c1b;--toast:#fbeaf1;--toast-tx:#2a0c1b;color-scheme:dark}
+*{box-sizing:border-box;margin:0}
+body{font-family:var(--font);background:var(--bg);color:var(--tx);line-height:1.5;font-size:15px;padding-bottom:calc(76px + env(safe-area-inset-bottom,0px));-webkit-tap-highlight-color:transparent}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:40;background:var(--card)}
+button,select,input{font:inherit;color:inherit}
+button{background:none;border:0;cursor:pointer}
+:focus-visible{outline:2px solid var(--pr);outline-offset:2px}
+svg.i{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex:none}
+.wrap{max-width:860px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:14px}
+.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:30;background:var(--card);border-bottom:1px solid var(--bd)}
+.bar{display:flex;align-items:center;gap:12px;height:56px}
+.brand{display:flex;align-items:center;gap:10px;font-weight:800;font-size:18px;margin-inline-end:auto}
+.logo{width:34px;height:34px;border-radius:10px;background:var(--pr);color:var(--on);display:grid;place-items:center}
+.logo svg{fill:currentColor;stroke:none}
+.sq{width:38px;height:38px;border-radius:10px;border:1px solid var(--bd);display:grid;place-items:center;color:var(--mu)}
+.sq:hover{background:var(--soft)}
+nav{position:fixed;inset:auto 0 0 0;z-index:30;display:flex;background:var(--card);border-top:1px solid var(--bd);padding:0 max(0px,env(safe-area-inset-right,0px)) env(safe-area-inset-bottom,0px) max(0px,env(safe-area-inset-left,0px))}
+nav button{flex:1;position:relative;display:flex;flex-direction:column;align-items:center;gap:3px;padding:9px 0 8px;font-size:11px;font-weight:500;color:var(--mu)}
+nav button.on{color:var(--pr);font-weight:700}
+nav em{font-style:normal;position:absolute;top:3px;inset-inline-start:calc(50% + 6px);min-width:16px;padding:0 5px;border-radius:99px;background:var(--pr);color:var(--on);font-size:10px;line-height:16px;text-align:center}
+nav em:empty{display:none}
+@media(min-width:820px){nav{position:static;border:0;background:none;padding:0;order:2}
+nav button{flex:none;flex-direction:row;gap:7px;padding:8px 14px;font-size:14px;border-radius:10px}
+nav button.on{background:var(--prs)}nav em{position:static}.brand{margin:0}.bar{justify-content:space-between}.bar .sq{order:3}}
+main{padding-top:16px}
+.dash{display:flex;gap:18px;align-items:center;padding:16px;margin-bottom:12px}
+.ring{position:relative;width:84px;height:84px;flex:none}
+.ring svg{transform:rotate(-90deg);width:100%;height:100%}
+.ring circle{fill:none;stroke-width:3.4;stroke:var(--soft)}
+.ring circle.fg{stroke:var(--pr);stroke-linecap:round;transition:stroke-dasharray .6s}
+.ring b{position:absolute;inset:0;display:grid;place-items:center;font-size:20px;font-weight:800;font-variant-numeric:tabular-nums}
+.dash>div:last-child{min-width:0}
+.dash h2{font-size:16px}.dash p{color:var(--mu);font-size:13px;margin-bottom:8px}
+.pills{display:flex;flex-wrap:wrap;gap:6px}
+.pills span{display:flex;align-items:center;gap:6px;font-size:12px;padding:3px 10px;border-radius:99px;background:var(--soft);color:var(--mu)}
+.pills b{color:var(--tx)}.pills i{width:8px;height:8px;border-radius:50%;background:var(--c)}
+.fb{padding:10px;margin-bottom:14px}
+.frow{display:flex;gap:8px}
+.search{position:relative;flex:1;min-width:0}
+.search svg{position:absolute;inset-inline-start:12px;top:12px;color:var(--mu)}
+.search input{width:100%;height:42px;padding-inline:38px 12px;border:1px solid var(--bd);border-radius:10px;background:var(--bg);font-size:14px}
+.fbtn{position:relative;height:42px;padding:0 14px;display:flex;align-items:center;gap:6px;border:1px solid var(--bd);border-radius:10px;font-size:13px;font-weight:700}
+.fbtn em{font-style:normal;background:var(--pr);color:var(--on);border-radius:99px;font-size:11px;min-width:18px;line-height:18px;text-align:center}
+.fbtn em:empty{display:none}
+.fpanel{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px;padding-top:10px;border-top:1px solid var(--bd)}
+.fpanel label{font-size:12px;color:var(--mu);font-weight:700;display:grid;gap:4px;min-width:0}
+select{height:40px;padding:0 10px;border:1px solid var(--bd);border-radius:10px;background:var(--bg);font-size:14px;width:100%}
+.clr{grid-column:1/-1;color:var(--pr);font-weight:700;font-size:13px;justify-self:start}
+@media(min-width:700px){.fpanel{grid-template-columns:repeat(5,1fr)}.clr{grid-column:auto;align-self:end;height:40px}}
+.list{display:grid;gap:10px}
+.lec{--c:var(--s0);background:var(--card);border:1px solid var(--bd);border-inline-start:4px solid var(--c);border-radius:14px;padding:14px 14px 12px}
+.lec.once{--c:var(--s1)}.lec.twice{--c:var(--s2)}.lec.thrice{--c:var(--s3)}
+.lh{display:flex;justify-content:space-between;gap:8px;align-items:flex-start}
+.chips{display:flex;flex-wrap:wrap;gap:6px;min-width:0}
+.chip{display:inline-flex;align-items:center;gap:4px;font-size:12px;padding:2px 9px;border-radius:7px;background:var(--soft);color:var(--mu)}
+.chip.dep{background:var(--prs);color:var(--pr);font-weight:700}
+.ib{width:36px;height:36px;margin:-4px;border-radius:10px;display:grid;place-items:center;color:var(--mu);flex:none}
+.ib:hover{background:var(--soft)}.ib.on{color:var(--pr)}.ib.on svg{fill:currentColor}
+.lec h3{font-size:17px;font-weight:700;line-height:1.45;margin:8px 0 2px;overflow-wrap:anywhere}
+.act{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px;padding-top:12px;border-top:1px solid var(--bd)}
+.seg{display:flex;flex:1;min-width:230px;padding:3px;border-radius:11px;background:var(--soft)}
+.seg button{flex:1;padding:7px 4px;border-radius:8px;font-size:12.5px;color:var(--mu);font-weight:500;white-space:nowrap}
+.seg button.on{background:var(--c);color:var(--onc);font-weight:700}
+.mcq{display:flex;align-items:center;justify-content:center;gap:6px;padding:0 14px;height:38px;border:1px solid var(--bd);border-radius:11px;font-size:13px;font-weight:700;color:var(--mu)}
+.mcq.on{background:var(--prs);border-color:var(--pr);color:var(--pr)}
+.gh{position:sticky;top:calc(56px + env(safe-area-inset-top,0px));z-index:5;display:flex;align-items:center;gap:8px;padding:10px 2px;margin-top:10px;background:var(--bg);font-size:14px;font-weight:800}
+.gh em{font-style:normal;font-size:12px;font-weight:500;color:var(--mu);background:var(--soft);padding:0 9px;border-radius:99px}
+.empty{text-align:center;padding:44px 20px;border:1.5px dashed var(--bd);border-radius:14px;color:var(--mu);font-size:14px}
+.empty svg{width:34px;height:34px;margin-bottom:8px;opacity:.6}
+.vh{padding:14px 16px;margin-bottom:12px;display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+.vh h2{font-size:17px}.vh p{font-size:13px;color:var(--mu)}
+#toast{position:fixed;z-index:60;left:50%;bottom:calc(76px + env(safe-area-inset-bottom,0px) + 14px);transform:translate(-50%,12px);max-width:calc(100% - 32px);padding:11px 20px;border-radius:99px;background:var(--toast);color:var(--toast-tx);font-weight:700;font-size:15px;text-align:center;opacity:0;pointer-events:none;transition:opacity .25s,transform .25s;box-shadow:0 6px 24px rgba(194,69,122,.28)}
+#toast.show{opacity:1;transform:translate(-50%,0)}
+@media(min-width:820px){#toast{bottom:28px}}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+
+</head>
+<body>
+<header class="top"><div class="wrap bar">
+  <div class="brand"><span class="logo" id="logo"></span>محاضرات فاطمة</div>
+  <nav id="nav" aria-label="التنقل"></nav>
+  <button class="sq" data-a="theme" id="theme" aria-label="تغيير المظهر"></button>
+</div></header>
+
+<main class="wrap">
+  <section id="dash" class="card dash">
+    <div class="ring"><svg viewBox="0 0 36 36"><circle cx="18" cy="18" r="15.9"/><circle class="fg" id="ringfg" cx="18" cy="18" r="15.9" pathLength="100" stroke-dasharray="0 100"/></svg><b id="pct">0%</b></div>
+    <div><h2>نسبة الإنجاز</h2><p id="sub"></p>
+      <div class="pills" id="pills"></div></div>
+  </section>
+
+  <section id="filters" class="card fb">
+    <div class="frow">
+      <div class="search"><span id="sicon"></span><input id="search-input" type="search" placeholder="ابحثي عن محاضرة أو مادة" aria-label="بحث"></div>
+      <button class="fbtn" data-a="fp" id="fbtn"><span id="ficon"></span>فلاتر<em id="fbadge"></em></button>
+    </div>
+    <div class="fpanel" id="fpanel" hidden>
+      <label>تجميع حسب<select id="group-by"><option value="none">بدون تجميع</option><option value="department" selected>المادة</option><option value="kind">النوع</option></select></label>
+      <label>المادة<select id="filter-dept"></select></label>
+      <label>النوع<select id="filter-kind"></select></label>
+      <label>الحالة<select id="filter-status"><option value="all">الكل</option><option value="none">ما قريتها</option><option value="once">مرة واحدة</option><option value="twice">مرتين</option><option value="thrice">3 مرات</option></select></label>
+      <button class="clr" data-a="clr">مسح الفلاتر</button>
+    </div>
+  </section>
+
+  <section class="view" id="v-list"><div class="list" id="list"></div></section>
+  <section class="view" id="v-todo" hidden>
+    <div class="card vh"><div><h2>مهامي</h2><p>المحاضرات التي ثبّتِّها لدراستها قريباً.</p></div></div>
+    <div class="list" id="todo-list"></div>
+  </section>
+</main>
+
+<div id="toast" role="status" aria-live="polite"></div>
+
+<script>
+document.documentElement.lang='ar';document.documentElement.dir='rtl';
+const $ = id => document.getElementById(id);
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const I = {
+  list:'M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01',
+  pin:'m19 21-7-4-7 4V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z',
+  search:'m21 21-4.3-4.3M11 19a8 8 0 1 0 0-16 8 8 0 0 0 0 16z',
+  check:'M20 6 9 17l-5-5',
+  sun:'M12 17a5 5 0 1 0 0-10 5 5 0 0 0 0 10zM12 1v2M12 21v2M4.2 4.2l1.4 1.4M18.4 18.4l1.4 1.4M1 12h2M21 12h2M4.2 19.8l1.4-1.4M18.4 5.6l1.4-1.4',
+  moon:'M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z',
+  filter:'M4 21v-7M4 10V3M12 21v-9M12 8V3M20 21v-5M20 12V3M1 14h6M9 8h6M17 16h6',
+  heart:'M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1-1.1a5.5 5.5 0 0 0-7.8 7.8l1 1.1L12 21l7.8-7.5 1-1.1a5.5 5.5 0 0 0 0-7.8z'
+};
+const ic = k => `<svg class="i" viewBox="0 0 24 24"><path d="${I[k]}"/></svg>`;
+const TABS = [['list','المحاضرات'],['todo','المهام']];
+const ST = [['none','ما قريتها'],['once','مرة'],['twice','مرتين'],['thrice','3 مرات']];
+const MSG = {once:'أحمد فخور بكِ 💗', twice:'أنتِ رائعة يا فاطمة جان ✨', thrice:'أعشقكِ يا فاطمة 💖', mcq:'دكتورة فطومة! 👩‍⚕️🎉'};
+const SUBJ = ['باثولوجي','طب عدلي','أخلاق طبية','توليد','جراحة','باطنية','أطفال','طب مجتمع'];
+
+/* [المادة, النوع, رقم المحاضرة, العنوان]
+   المعرّف (id) يُحسب من ترتيب السطر هنا، لذلك أضيفوا أي محاضرة جديدة في نهاية القائمة فقط. */
+const DATA = [
+['باثولوجي','نظري','lec1','Pathology respiratory system'],
+['طب عدلي','نظري','lec1','تعريف الطب العدلي'],
+['طب عدلي','نظري','lec2','الموت وعلاماته'],
+['طب عدلي','نظري','lec3','الموت وعلاماته'],
+['طب عدلي','نظري','lec4','الموت وعلاماته'],
+['أخلاق طبية','نظري','lec1','المحاضرة الأولى'],
+['أخلاق طبية','نظري','lec2','المحاضرة رقم 2'],
+['توليد','نظري','lec1','History & examination in obstetrics'],
+['جراحة','نظري','lec1','Endocrine system'],
+['باطنية','نظري','lec1','Respiratory Ix + failure 1'],
+['جراحة','نظري','lec2','Lec 1'],
+['جراحة','نظري','lec3','Lec 2'],
+['أطفال','نظري','lec1','Growth'],
+['باطنية','نظري','ملحق','GIT Introduction – Cases'],
+['باطنية','نظري','ملحق','Lec 1 intro – ECG'],
+['باطنية','نظري','lec3','Lec 1 Introduction ECG'],
+['باطنية','نظري','lec2','GIT Introduction'],
+['طب مجتمع','نظري','lec1','Epidemiology lecture 1 – Terminology'],
+['طب مجتمع','نظري','lec2','Epidemiology lecture 2 – Prevention levels'],
+['أخلاق طبية','نظري','lec3','المسؤولية الطبية'],
+['أخلاق طبية','نظري','lec4','المحاضرة الرابعة'],
+['باثولوجي','نظري','lec2','Respiratory system 2'],
+['باثولوجي','نظري','lec3','CVS'],
+['باثولوجي','عملي','lab1','Respiratory system lab'],
+['باثولوجي','عملي','lab2','CVS lab'],
+['توليد','نظري','lec2','The placenta'],
+['توليد','نظري','lec3','Diagnosis of pregnancy'],
+['جراحة','نظري','lec5','The Thyroid Gland'],
+['جراحة','نظري','lec6','The Thyroid Gland lec 3'],
+['جراحة','نظري','lec7','Lec 3'],
+['جراحة','نظري','lec8','Lec 4'],
+['طب عدلي','نظري','lec5','التقارير الطبية'],
+['طب عدلي','نظري','lec6','الاختناق 1'],
+['طب عدلي','نظري','lec7','الاختناق 2'],
+['طب عدلي','نظري','lec8','الاختناق 3'],
+['طب عدلي','نظري','lec9','الغرق'],
+['طب عدلي','نظري','lec10','الصعق الكهربائي'],
+['أخلاق طبية','نظري','lec5','مسؤولية الطبيب – م 5'],
+['أخلاق طبية','نظري','lec6','المحاضرة رقم 6'],
+['باثولوجي','نظري','lec4','Renal pathology'],
+['جراحة','نظري','lec9','The Thyroid Gland lecture 4'],
+['جراحة','نظري','lec10','Lec 14'],
+['جراحة','نظري','lec11','Lec 14b'],
+['جراحة','نظري','lec12','Lec 14c'],
+['باطنية','نظري','GIT','Merged GIT lecture (barium)'],
+['باطنية','نظري','ملحق','Upper GI Clinical Image MCQs'],
+['باطنية','نظري','lec4','Asthma'],
+['طب مجتمع','نظري','lec3','Epidemiology lecture 3 – Types of epidemiological data'],
+['أطفال','نظري','lec2','Presentation1 (1)'],
+['باثولوجي','عملي','lec3','Renal pathology lab'],
+['باثولوجي','نظري','lec5','GIT'],
+['باثولوجي','عملي','lec4','GIT lab'],
+['أخلاق طبية','نظري','lec7','المحاضرة رقم 7'],
+['أخلاق طبية','نظري','lec8','المحاضرة رقم 8'],
+['توليد','نظري','lec4','Maternal physiology during pregnancy'],
+['توليد','نظري','ملحق','2_5359326746762061458'],
+['توليد','نظري','lec5','Antenatal care (ANC)'],
+['باطنية','نظري','lec5','COPD'],
+['جراحة','نظري','lec13','Lec 8 – Stomach and duodenum (4)'],
+['جراحة','نظري','lec14','Lec 9 – Stomach and duodenum (5)'],
+['باطنية','نظري','GIT','DOC-20261008-WA0019'],
+['باطنية','نظري','ملحق','Stomach & Duodenum Clinical Challenge'],
+['باطنية','نظري','lec7','Lec 2 HTN'],
+['باطنية','نظري','lec8','Lec 3 HTN + Atherosclerosis'],
+['جراحة','نظري','lec15','The Thyroid Gland lec 5'],
+['باثولوجي','نظري','lec6','Liver & pancreas'],
+['باثولوجي','عملي','lec4','GIT lab (نسخة ثانية)'],
+['طب عدلي','نظري','','الصفات المميزة لإصابات المناطق الجسمية المختلفة'],
+['طب عدلي','نظري','','حوادث الطرق'],
+['طب عدلي','نظري','','حوادث القطارات'],
+['توليد','نظري','lec6','2_5294446399558006517'],
+['جراحة','نظري','lec16','The Parathyroid Gland'],
+['باطنية','نظري','lec9','Pneumonia'],
+['جراحة','نظري','lec17','Lec 15'],
+['جراحة','نظري','lec18','Lec 11 – The small bowel (2)'],
+['باطنية','نظري','lec10','Diseases of small intestine'],
+['باطنية','نظري','lec10','Small intestine – 15 clinical image MCQs'],
+['باطنية','نظري','lec11','ACS (lec 4)'],
+['أطفال','نظري','ملحق','Infectious diseases study topics'],
+['أطفال','نظري','ملحق','Guidelines CDC'],
+['أطفال','نظري','lec3','Bacterial infections'],
+['جراحة','نظري','lec19','Lecture 2'],
+['جراحة','نظري','lec4','Lecture 1']
+];
+const num = l => { const m = /(\d+)/.exec(l||''); return m ? +m[1] : 999; };
+const L = DATA.map(([department,kind,lec,title],n) => ({id:'m'+(n+1),department,kind,lec,title,n}))
+  .sort((a,b) => SUBJ.indexOf(a.department)-SUBJ.indexOf(b.department) || (a.kind==='عملي')-(b.kind==='عملي') || num(a.lec)-num(b.lec) || a.n-b.n);
+
+const Storage = {
+  get:(k,id,d)=>{ try{ return localStorage.getItem(`${k}_${id}`)||d; }catch(e){ return mem[`${k}_${id}`]||d; } },
+  set:(k,id,v)=>{ try{ localStorage.setItem(`${k}_${id}`,v); }catch(e){ mem[`${k}_${id}`]=v; } },
+  toggle:(k,id)=>{ const c=Storage.get(k,id,'false')==='true'; Storage.set(k,id,c?'false':'true'); return !c; }
+};
+const mem = {};
+let view='list';
+
+let tt;
+function toast(msg){
+  const t=$('toast'); t.textContent=msg; t.classList.add('show');
+  clearTimeout(tt); tt=setTimeout(()=>t.classList.remove('show'),3200);
+}
+
+/* ---------- init ---------- */
+$('logo').innerHTML = ic('heart'); $('sicon').innerHTML = ic('search'); $('ficon').innerHTML = ic('filter');
+$('nav').innerHTML = TABS.map(([k,l])=>`<button data-a="view" data-v="${k}" id="t-${k}">${ic(k)}<span>${l}</span>${k==='todo'?`<em id="n-todo"></em>`:''}</button>`).join('');
+const isDark = () => { const t=document.documentElement.dataset.theme; return t ? t==='dark' : matchMedia('(prefers-color-scheme: dark)').matches; };
+try{ const t=localStorage.getItem('theme'); if(t) document.documentElement.dataset.theme=t; }catch(e){}
+const setThemeIcon = () => $('theme').innerHTML = ic(isDark() ? 'sun' : 'moon');
+setThemeIcon();
+
+document.addEventListener('click', e => {
+  const b = e.target.closest('[data-a]'); if (!b) return;
+  const {a,id,v} = b.dataset;
+  if (a==='view') return go(v);
+  if (a==='theme') { const d=!isDark(); document.documentElement.dataset.theme=d?'dark':'light'; try{localStorage.setItem('theme',d?'dark':'light');}catch(e){} return setThemeIcon(); }
+  if (a==='fp') { $('fpanel').hidden = !$('fpanel').hidden; return; }
+  if (a==='st') { const prev=Storage.get('status',id,'none'); Storage.set('status',id,v); if(v!=='none' && v!==prev) toast(MSG[v]); }
+  else if (a==='mcq') { if (Storage.toggle('mcq',id)) toast(MSG.mcq); }
+  else if (a==='todo') Storage.toggle('todo',id);
+  else if (a==='clr') { ['filter-dept','filter-kind','filter-status'].forEach(i=>$(i).value='all'); $('group-by').value='department'; $('search-input').value=''; }
+  render();
+});
+
+function setupFilters() {
+  const fill = (id,arr,label) => $(id).innerHTML = `<option value="all">كل ${label}</option>` + arr.map(v=>`<option value="${esc(v)}">${esc(v)}</option>`).join('');
+  fill('filter-dept',SUBJ,'المواد'); fill('filter-kind',['نظري','عملي'],'الأنواع');
+  ['search-input','filter-dept','filter-kind','filter-status','group-by'].forEach(id =>
+    $(id).addEventListener(id==='search-input'?'input':'change', render));
+}
+function filtered() {
+  const q=$('search-input').value.toLowerCase().trim(), dep=$('filter-dept').value, kd=$('filter-kind').value, st=$('filter-status').value;
+  return L.filter(i =>
+    (i.title+' '+i.department+' '+i.lec).toLowerCase().includes(q) &&
+    (dep==='all'||i.department===dep) && (kd==='all'||i.kind===kd) &&
+    (st==='all'||Storage.get('status',i.id,'none')===st));
+}
+
+/* ---------- components ---------- */
+const empty = (k,msg) => `<div class="empty">${ic(k)}<p>${msg}</p></div>`;
+function card(i) {
+  const id=esc(i.id), st=Storage.get('status',i.id,'none');
+  const mq=Storage.get('mcq',i.id,'false')==='true', td=Storage.get('todo',i.id,'false')==='true';
+  return `<article class="lec ${st}">
+    <div class="lh"><div class="chips">
+      <span class="chip dep">${esc(i.department)}</span>
+      <span class="chip">${esc(i.kind)}</span>
+      ${i.lec?`<span class="chip"><bdi>${esc(i.lec)}</bdi></span>`:''}
+    </div><button class="ib${td?' on':''}" data-a="todo" data-id="${id}" aria-pressed="${td}" title="تثبيت في المهام">${ic('pin')}</button></div>
+    <h3 dir="auto">${esc(i.title)}</h3>
+    <div class="act">
+      <div class="seg" role="group" aria-label="حالة القراءة">${ST.map(([k,l])=>`<button class="${k===st?'on':''}" data-a="st" data-v="${k}" data-id="${id}">${l}</button>`).join('')}</div>
+      <button class="mcq${mq?' on':''}" data-a="mcq" data-id="${id}" aria-pressed="${mq}">${ic('check')}حل MCQs</button>
+    </div></article>`;
+}
+
+/* ---------- views ---------- */
+function rList() {
+  const f=filtered(), g=$('group-by').value;
+  if (!f.length) return $('list').innerHTML = empty('search','لا توجد نتائج. جرّبي تغيير البحث أو مسح الفلاتر.');
+  if (g==='none') return $('list').innerHTML = f.map(card).join('');
+  const groups = {};
+  f.forEach(i => (groups[i[g]] ||= []).push(i));
+  $('list').innerHTML = Object.keys(groups).map(n =>
+    `<div><h2 class="gh">${esc(n)}<em>${groups[n].length}</em></h2><div class="list">${groups[n].map(card).join('')}</div></div>`).join('');
+}
+function rTodo() {
+  const a = L.filter(i=>Storage.get('todo',i.id,'false')==='true');
+  $('todo-list').innerHTML = a.length ? a.map(card).join('') : empty('pin','لا توجد مهام بعد. اضغطي على أيقونة التثبيت في أي محاضرة لإضافتها هنا.');
+}
+
+function stats() {
+  let once=0,twice=0,thrice=0,mcq=0,todo=0;
+  L.forEach(i => {
+    const s=Storage.get('status',i.id,'none');
+    if(s==='once')once++; else if(s==='twice')twice++; else if(s==='thrice')thrice++;
+    if(Storage.get('mcq',i.id,'false')==='true')mcq++;
+    if(Storage.get('todo',i.id,'false')==='true')todo++;
+  });
+  const total=L.length, none=total-once-twice-thrice;
+  const pct = total ? Math.min(100,Math.round((once*.33+twice*.66+thrice)/total*100)) : 0;
+  $('pct').textContent = pct+'%'; $('ringfg').setAttribute('stroke-dasharray',`${pct} 100`);
+  $('sub').textContent = `${total-none} من ${total} محاضرة تمت قراءتها`;
+  const pill = (c,l,n) => `<span><i style="--c:${c}"></i>${l} <b>${n}</b></span>`;
+  $('pills').innerHTML = pill('var(--s0)','لم تُقرأ',none)+pill('var(--s1)','مرة',once)+pill('var(--s2)','مرتين',twice)+pill('var(--s3)','3 مرات',thrice)+pill('var(--pr)','MCQs',mcq);
+  $('n-todo').textContent = todo||'';
+  const n = ['filter-dept','filter-kind','filter-status'].filter(i=>$(i).value!=='all').length + ($('group-by').value!=='department');
+  $('fbadge').textContent = n||'';
+}
+function render() { ({list:rList,todo:rTodo})[view](); stats(); }
+function go(v) {
+  view = v;
+  TABS.forEach(([k]) => { $('t-'+k).classList.toggle('on',k===v); $('v-'+k).hidden = k!==v; });
+  $('filters').hidden = v!=='list';
+  scrollTo({top:0}); render();
+}
+setupFilters(); go(view);
+</script>
+</body>
+</html>
