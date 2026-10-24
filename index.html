@@ -67,14 +67,14 @@ main{padding-top:16px}
 .fpanel label{font-size:12px;color:var(--mu);font-weight:700;display:grid;gap:4px;min-width:0}
 select{height:40px;padding:0 10px;border:1px solid var(--bd);border-radius:10px;background:var(--bg);font-size:14px;width:100%}
 .clr{grid-column:1/-1;color:var(--pr);font-weight:700;font-size:13px;justify-self:start}
-@media(min-width:700px){.fpanel{grid-template-columns:repeat(5,1fr)}.clr{grid-column:auto;align-self:end;height:40px}}
+@media(min-width:700px){.fpanel{grid-template-columns:repeat(6,1fr)}.clr{grid-column:auto;align-self:end;height:40px}}
 .list{display:grid;gap:10px}
 .lec{--c:var(--s0);background:var(--card);border:1px solid var(--bd);border-inline-start:4px solid var(--c);border-radius:14px;padding:14px 14px 12px}
 .lec.once{--c:var(--s1)}.lec.twice{--c:var(--s2)}.lec.thrice{--c:var(--s3)}
 .lh{display:flex;justify-content:space-between;gap:8px;align-items:flex-start}
 .chips{display:flex;flex-wrap:wrap;gap:6px;min-width:0}
 .chip{display:inline-flex;align-items:center;gap:4px;font-size:12px;padding:2px 9px;border-radius:7px;background:var(--soft);color:var(--mu)}
-.chip.dep{background:var(--prs);color:var(--pr);font-weight:700}
+.chip svg{width:13px;height:13px}.chip.dep{background:var(--prs);color:var(--pr);font-weight:700}
 .ib{width:36px;height:36px;margin:-4px;border-radius:10px;display:grid;place-items:center;color:var(--mu);flex:none}
 .ib:hover{background:var(--soft)}.ib.on{color:var(--pr)}.ib.on svg{fill:currentColor}
 .lec h3{font-size:17px;font-weight:700;line-height:1.45;margin:8px 0 2px;overflow-wrap:anywhere}
@@ -140,8 +140,9 @@ select{height:40px;padding:0 10px;border:1px solid var(--bd);border-radius:10px;
       <button class="fbtn" data-a="fp" id="fbtn"><span id="ficon"></span>فلاتر<em id="fbadge"></em></button>
     </div>
     <div class="fpanel" id="fpanel" hidden>
-      <label>تجميع حسب<select id="group-by"><option value="none">بدون تجميع</option><option value="department" selected>المادة</option><option value="kind">النوع</option></select></label>
+      <label>تجميع حسب<select id="group-by"><option value="none">بدون تجميع</option><option value="department" selected>المادة</option><option value="kind">النوع</option><option value="doctor">الدكتور</option></select></label>
       <label>المادة<select id="filter-dept"></select></label>
+      <label>الدكتور<select id="filter-doc"></select></label>
       <label>النوع<select id="filter-kind"></select></label>
       <label>الحالة<select id="filter-status"><option value="all">الكل</option><option value="none">ما قريتها</option><option value="once">مرة واحدة</option><option value="twice">مرتين</option><option value="thrice">3 مرات</option></select></label>
       <button class="clr" data-a="clr">مسح الفلاتر</button>
@@ -172,6 +173,7 @@ const I = {
   sun:'M12 17a5 5 0 1 0 0-10 5 5 0 0 0 0 10zM12 1v2M12 21v2M4.2 4.2l1.4 1.4M18.4 18.4l1.4 1.4M1 12h2M21 12h2M4.2 19.8l1.4-1.4M18.4 5.6l1.4-1.4',
   moon:'M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z',
   filter:'M4 21v-7M4 10V3M12 21v-9M12 8V3M20 21v-5M20 12V3M1 14h6M9 8h6M17 16h6',
+  user:'M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2M12 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8z',
   heart:'M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1-1.1a5.5 5.5 0 0 0-7.8 7.8l1 1.1L12 21l7.8-7.5 1-1.1a5.5 5.5 0 0 0 0-7.8z'
 };
 const ic = k => `<svg class="i" viewBox="0 0 24 24"><path d="${I[k]}"/></svg>`;
@@ -180,97 +182,98 @@ const ST = [['none','ما قريتها'],['once','مرة'],['twice','مرتين'
 const MSG = {once:'أحمد فخور بكِ 💗', twice:'أنتِ رائعة يا فاطمة جان ✨', thrice:'أعشقكِ يا فاطمة 💖', mcq:'دكتورة فطومة! 👩‍⚕️🎉'};
 const SUBJ = ['باثولوجي','طب عدلي','أخلاق طبية','توليد','جراحة','باطنية','أطفال','طب مجتمع'];
 
-/* [المادة, النوع, رقم المحاضرة, العنوان, اسم الملف الأصلي]
+/* [المادة, النوع, رقم المحاضرة, العنوان, الدكتور, اسم الملف الأصلي]
    المعرّف (id) يُحسب من ترتيب السطر هنا، لذلك أضيفوا أي محاضرة جديدة في نهاية القائمة فقط. */
 const DATA = [
-['باثولوجي','نظري','lec1','Pathology respiratory system',"Pathology respiratory sys"],
-['طب عدلي','نظري','lec1','تعريف الطب العدلي',"تعريف الطب العدلي"],
-['طب عدلي','نظري','lec2','الموت وعلاماته',"الموت وعلاماته"],
-['طب عدلي','نظري','lec3','الموت وعلاماته',"الموت وعلاماته"],
-['طب عدلي','نظري','lec4','الموت وعلاماته',"الموت وعلاماته"],
-['أخلاق طبية','نظري','lec1','المحاضرة الأولى',"محاضرة"],
-['أخلاق طبية','نظري','lec2','المحاضرة رقم 2',"2 - المحاضرة رقم"],
-['توليد','نظري','lec1','History & examination in obstetrics',"History&examination in OBSTETRICS"],
-['جراحة','نظري','lec1','Endocrine system',"ENDOCRINE SYSTEM"],
-['باطنية','نظري','lec1','Respiratory Ix + failure 1',"Respiratory Ix+failure-1"],
-['جراحة','نظري','lec2','Lec 1',"lec1"],
-['جراحة','نظري','lec3','Lec 2',"Lec 2"],
-['أطفال','نظري','lec1','Growth',"Growth"],
-['باطنية','نظري','ملحق','GIT Introduction – Cases',"GIT_Introduction_Presenti…RICKS_CASES_answer"],
-['باطنية','نظري','ملحق','Lec 1 intro – ECG',"Lec 1 intr0-ECG"],
-['باطنية','نظري','lec3','Lec 1 Introduction ECG',"Lec 1 introduction ECG"],
-['باطنية','نظري','lec2','GIT Introduction',"GIT Introduction"],
-['طب مجتمع','نظري','lec1','Epidemiology lecture 1 – Terminology',"Epidemiology lecture 1 TERMINOLOGY"],
-['طب مجتمع','نظري','lec2','Epidemiology lecture 2 – Prevention levels',"Epidemiology_lecture_2_EC…_and_prevention_levels"],
-['أخلاق طبية','نظري','lec3','المسؤولية الطبية',"-محاضرة -- 3 المسؤولية الطبية"],
-['أخلاق طبية','نظري','lec4','المحاضرة الرابعة',"المحاضرة الرابعة -4"],
-['باثولوجي','نظري','lec2','Respiratory system 2',"Respiratory sys. 2"],
-['باثولوجي','نظري','lec3','CVS',"CVS"],
-['باثولوجي','عملي','lab1','Respiratory system lab',"Respiratory sys. lab."],
-['باثولوجي','عملي','lab2','CVS lab',"CVS. Lab"],
-['توليد','نظري','lec2','The placenta',"The placenta"],
-['توليد','نظري','lec3','Diagnosis of pregnancy',"Diagnosis of pregnancy"],
-['جراحة','نظري','lec5','The Thyroid Gland',"THE THYROID GLAND"],
-['جراحة','نظري','lec6','The Thyroid Gland lec 3',"The Thyroid Gland lec 3"],
-['جراحة','نظري','lec7','Lec 3',"Lec 3"],
-['جراحة','نظري','lec8','Lec 4',"Lec 4"],
-['طب عدلي','نظري','lec5','التقارير الطبية',"التقارير الطبية"],
-['طب عدلي','نظري','lec6','الاختناق 1',"الاختناق 1"],
-['طب عدلي','نظري','lec7','الاختناق 2',"الاختناق 2"],
-['طب عدلي','نظري','lec8','الاختناق 3',"الاختناق 3"],
-['طب عدلي','نظري','lec9','الغرق',"الغرق"],
-['طب عدلي','نظري','lec10','الصعق الكهربائي',"الصعق الكهربائي"],
-['أخلاق طبية','نظري','lec5','مسؤولية الطبيب – م 5',"مسؤولية الطبيب - م -5"],
-['أخلاق طبية','نظري','lec6','المحاضرة رقم 6',"محاضرة رقم - - 6 -"],
-['باثولوجي','نظري','lec4','Renal pathology',"renal pathology _٠٩٥٢٢…"],
-['جراحة','نظري','lec9','The Thyroid Gland lecture 4',"The_Thyroid_Gland_lecture4_updated_11…"],
-['جراحة','نظري','lec10','Lec 14',"Lec 14"],
-['جراحة','نظري','lec11','Lec 14b',"Lec 14b"],
-['جراحة','نظري','lec12','Lec 14c',"Lec 14c"],
-['باطنية','نظري','GIT','Merged GIT lecture (barium)',"merged_GIT_lecture_Dr_Ibr…barium_updated 1"],
-['باطنية','نظري','ملحق','Upper GI Clinical Image MCQs',"Upper_GI_Clinical_Image_…Answers_Alternating 1"],
-['باطنية','نظري','lec4','Asthma',"Asthma"],
-['طب مجتمع','نظري','lec3','Epidemiology lecture 3 – Types of epidemiological data',"Epidemiology_lecture_3_Ty…f_epidemiological_data"],
-['أطفال','نظري','lec2','Presentation1 (1)',"Presentation1 (1)"],
-['باثولوجي','عملي','lec3','Renal pathology lab',"renal pathology lab"],
-['باثولوجي','نظري','lec5','GIT',"GIT"],
-['باثولوجي','عملي','lec4','GIT lab',"GIT lab"],
-['أخلاق طبية','نظري','lec7','المحاضرة رقم 7',"محاضرة رقم - 7"],
-['أخلاق طبية','نظري','lec8','المحاضرة رقم 8',"محاضرة رقم - 8"],
-['توليد','نظري','lec4','Maternal physiology during pregnancy',"Maternal Physiology during Pregnancy"],
-['توليد','نظري','ملحق','2_5359326746762061458',"2_5359326746762061458"],
-['توليد','نظري','lec5','Antenatal care (ANC)',"ANTENATAL CARE (ANC)"],
-['باطنية','نظري','lec5','COPD',"COPD"],
-['جراحة','نظري','lec13','Lec 8 – Stomach and duodenum (4)',"lec8 - stomach and dodenum(4)"],
-['جراحة','نظري','lec14','Lec 9 – Stomach and duodenum (5)',"lec9 - stomach and dodenum(5)"],
-['باطنية','نظري','GIT','DOC-20261008-WA0019',"DOC-20261008-WA0019"],
-['باطنية','نظري','ملحق','Stomach & Duodenum Clinical Challenge',"Stomach_Duodenum_Clinic…ge_Challenge_Updated"],
-['باطنية','نظري','lec7','Lec 2 HTN',["Lec 2 HTN", "Lec 2 HTN_113633"]],
-['باطنية','نظري','lec8','Lec 3 HTN + Atherosclerosis',["Lec 3 HTN +Atherosclersosis", "Lec 3 HTN +Atherosclersosis_113549"]],
-['جراحة','نظري','lec15','The Thyroid Gland lec 5',"The_Thyroid_Gland_LEC_5_updated"],
-['باثولوجي','نظري','lec6','Liver & pancreas',"liver & pancreas"],
-['باثولوجي','عملي','lec4','GIT lab (نسخة ثانية)',"GIT lab"],
-['طب عدلي','نظري','','الصفات المميزة لإصابات المناطق الجسمية المختلفة',"الصفات-المميزة_لأصابات_المناطق_الجسمية-المختلفة"],
-['طب عدلي','نظري','','حوادث الطرق',"حوادث الطرق"],
-['طب عدلي','نظري','','حوادث القطارات',"حوادث القطارات"],
-['توليد','نظري','lec6','2_5294446399558006517',"2_5294446399558006517"],
-['جراحة','نظري','lec16','The Parathyroid Gland',"The_Parathyroid_Gland_updated"],
-['باطنية','نظري','lec9','Pneumonia',"Pneumonia"],
-['جراحة','نظري','lec17','Lec 15',"Lec 15"],
-['جراحة','نظري','lec18','Lec 11 – The small bowel (2)',"lec11 - The Small Bowel(2)"],
-['باطنية','نظري','lec10','Diseases of small intestine',"Diseases_of_Small_Intestine_Reorganized"],
-['باطنية','نظري','lec10','Small intestine – 15 clinical image MCQs',"Small_Intestine_15_Clinical_Image_MCQs"],
-['باطنية','نظري','lec11','ACS (lec 4)',"lec 4 ACS…"],
-['أطفال','نظري','ملحق','Infectious diseases study topics',"Infectious_Diseases_Study_Topics"],
-['أطفال','نظري','ملحق','Guidelines CDC',"Guidelines CDC"],
-['أطفال','نظري','lec3','Bacterial infections',"Bacterial infections"],
-['جراحة','نظري','lec19','Lecture 2',"Lecture 2 – Copy"],
-['جراحة','نظري','lec4','Lecture 1',"Lecture 1 – Copy"]
+['باثولوجي','نظري','lec1','Pathology respiratory system','',"Pathology respiratory sys"],
+['طب عدلي','نظري','lec1','تعريف الطب العدلي','',"تعريف الطب العدلي"],
+['طب عدلي','نظري','lec2','الموت وعلاماته','',"الموت وعلاماته"],
+['طب عدلي','نظري','lec3','الموت وعلاماته','',"الموت وعلاماته"],
+['طب عدلي','نظري','lec4','الموت وعلاماته','',"الموت وعلاماته"],
+['أخلاق طبية','نظري','lec1','المحاضرة الأولى','',"محاضرة"],
+['أخلاق طبية','نظري','lec2','المحاضرة رقم 2','',"2 - المحاضرة رقم"],
+['توليد','نظري','lec1','History & examination in obstetrics','دكتورة ايناس',"History&examination in OBSTETRICS"],
+['جراحة','نظري','lec1','Endocrine system','دكتور زيد',"ENDOCRINE SYSTEM"],
+['باطنية','نظري','lec1','Respiratory Ix + failure 1','دكتور سعد هلاوي',"Respiratory Ix+failure-1"],
+['جراحة','نظري','lec2','Lec 1','دكتور بسام',"lec1"],
+['جراحة','نظري','lec3','Lec 2','دكتور بسام',"Lec 2"],
+['أطفال','نظري','lec1','Growth','',"Growth"],
+['باطنية','نظري','ملحق','GIT Introduction – Cases','',"GIT_Introduction_Presenti…RICKS_CASES_answer"],
+['باطنية','نظري','ملحق','Lec 1 intro – ECG','',"Lec 1 intr0-ECG"],
+['باطنية','نظري','lec3','Lec 1 Introduction ECG','دكتور علي عبد الكريم',"Lec 1 introduction ECG"],
+['باطنية','نظري','lec2','GIT Introduction','دكتور ابراهيم',"GIT Introduction"],
+['طب مجتمع','نظري','lec1','Epidemiology lecture 1 – Terminology','دكتور عامر',"Epidemiology lecture 1 TERMINOLOGY"],
+['طب مجتمع','نظري','lec2','Epidemiology lecture 2 – Prevention levels','دكتور عامر',"Epidemiology_lecture_2_EC…_and_prevention_levels"],
+['أخلاق طبية','نظري','lec3','المسؤولية الطبية','',"-محاضرة -- 3 المسؤولية الطبية"],
+['أخلاق طبية','نظري','lec4','المحاضرة الرابعة','',"المحاضرة الرابعة -4"],
+['باثولوجي','نظري','lec2','Respiratory system 2','',"Respiratory sys. 2"],
+['باثولوجي','نظري','lec3','CVS','',"CVS"],
+['باثولوجي','عملي','lab1','Respiratory system lab','',"Respiratory sys. lab."],
+['باثولوجي','عملي','lab2','CVS lab','',"CVS. Lab"],
+['توليد','نظري','lec2','The placenta','دكتورة ايناس',"The placenta"],
+['توليد','نظري','lec3','Diagnosis of pregnancy','دكتورة ايناس',"Diagnosis of pregnancy"],
+['جراحة','نظري','lec5','The Thyroid Gland','دكتور زيد',"THE THYROID GLAND"],
+['جراحة','نظري','lec6','The Thyroid Gland lec 3','دكتور زيد',"The Thyroid Gland lec 3"],
+['جراحة','نظري','lec7','Lec 3','دكتور بسام',"Lec 3"],
+['جراحة','نظري','lec8','Lec 4','دكتور بسام',"Lec 4"],
+['طب عدلي','نظري','lec5','التقارير الطبية','',"التقارير الطبية"],
+['طب عدلي','نظري','lec6','الاختناق 1','',"الاختناق 1"],
+['طب عدلي','نظري','lec7','الاختناق 2','',"الاختناق 2"],
+['طب عدلي','نظري','lec8','الاختناق 3','',"الاختناق 3"],
+['طب عدلي','نظري','lec9','الغرق','',"الغرق"],
+['طب عدلي','نظري','lec10','الصعق الكهربائي','',"الصعق الكهربائي"],
+['أخلاق طبية','نظري','lec5','مسؤولية الطبيب – م 5','',"مسؤولية الطبيب - م -5"],
+['أخلاق طبية','نظري','lec6','المحاضرة رقم 6','',"محاضرة رقم - - 6 -"],
+['باثولوجي','نظري','lec4','Renal pathology','',"renal pathology _٠٩٥٢٢…"],
+['جراحة','نظري','lec9','The Thyroid Gland lecture 4','دكتور زيد',"The_Thyroid_Gland_lecture4_updated_11…"],
+['جراحة','نظري','lec10','Lec 14','دكتور بسام',"Lec 14"],
+['جراحة','نظري','lec11','Lec 14b','دكتور بسام',"Lec 14b"],
+['جراحة','نظري','lec12','Lec 14c','دكتور بسام',"Lec 14c"],
+['باطنية','نظري','GIT','Merged GIT lecture (barium)','دكتور ابراهيم',"merged_GIT_lecture_Dr_Ibr…barium_updated 1"],
+['باطنية','نظري','ملحق','Upper GI Clinical Image MCQs','',"Upper_GI_Clinical_Image_…Answers_Alternating 1"],
+['باطنية','نظري','lec4','Asthma','دكتور سعد هلاوي',"Asthma"],
+['طب مجتمع','نظري','lec3','Epidemiology lecture 3 – Types of epidemiological data','دكتور عامر',"Epidemiology_lecture_3_Ty…f_epidemiological_data"],
+['أطفال','نظري','lec2','Presentation1 (1)','دكتورة دعاء',"Presentation1 (1)"],
+['باثولوجي','عملي','lec3','Renal pathology lab','',"renal pathology lab"],
+['باثولوجي','نظري','lec5','GIT','',"GIT"],
+['باثولوجي','عملي','lec4','GIT lab','',"GIT lab"],
+['أخلاق طبية','نظري','lec7','المحاضرة رقم 7','',"محاضرة رقم - 7"],
+['أخلاق طبية','نظري','lec8','المحاضرة رقم 8','',"محاضرة رقم - 8"],
+['توليد','نظري','lec4','Maternal physiology during pregnancy','دكتورة ايناس',"Maternal Physiology during Pregnancy"],
+['توليد','نظري','ملحق','2_5359326746762061458','',"2_5359326746762061458"],
+['توليد','نظري','lec5','Antenatal care (ANC)','دكتورة مريم',"ANTENATAL CARE (ANC)"],
+['باطنية','نظري','lec5','COPD','دكتور انس',"COPD"],
+['جراحة','نظري','lec13','Lec 8 – Stomach and duodenum (4)','دكتور بسام',"lec8 - stomach and dodenum(4)"],
+['جراحة','نظري','lec14','Lec 9 – Stomach and duodenum (5)','دكتور بسام',"lec9 - stomach and dodenum(5)"],
+['باطنية','نظري','GIT','DOC-20261008-WA0019','دكتور ابراهيم',"DOC-20261008-WA0019"],
+['باطنية','نظري','ملحق','Stomach & Duodenum Clinical Challenge','',"Stomach_Duodenum_Clinic…ge_Challenge_Updated"],
+['باطنية','نظري','lec7','Lec 2 HTN','دكتور علي عبد الكريم',["Lec 2 HTN", "Lec 2 HTN_113633"]],
+['باطنية','نظري','lec8','Lec 3 HTN + Atherosclerosis','دكتور علي عبد الكريم',["Lec 3 HTN +Atherosclersosis", "Lec 3 HTN +Atherosclersosis_113549"]],
+['جراحة','نظري','lec15','The Thyroid Gland lec 5','دكتور زيد',"The_Thyroid_Gland_LEC_5_updated"],
+['باثولوجي','نظري','lec6','Liver & pancreas','',"liver & pancreas"],
+['باثولوجي','عملي','lec4','GIT lab (نسخة ثانية)','',"GIT lab"],
+['طب عدلي','نظري','','الصفات المميزة لإصابات المناطق الجسمية المختلفة','',"الصفات-المميزة_لأصابات_المناطق_الجسمية-المختلفة"],
+['طب عدلي','نظري','','حوادث الطرق','',"حوادث الطرق"],
+['طب عدلي','نظري','','حوادث القطارات','',"حوادث القطارات"],
+['توليد','نظري','lec6','2_5294446399558006517','دكتورة ايناس',"2_5294446399558006517"],
+['جراحة','نظري','lec16','The Parathyroid Gland','',"The_Parathyroid_Gland_updated"],
+['باطنية','نظري','lec9','Pneumonia','دكتور انس',"Pneumonia"],
+['جراحة','نظري','lec17','Lec 15','دكتور بسام',"Lec 15"],
+['جراحة','نظري','lec18','Lec 11 – The small bowel (2)','دكتور بسام',"lec11 - The Small Bowel(2)"],
+['باطنية','نظري','lec10','Diseases of small intestine','دكتور ابراهيم',"Diseases_of_Small_Intestine_Reorganized"],
+['باطنية','نظري','lec10','Small intestine – 15 clinical image MCQs','دكتور ابراهيم',"Small_Intestine_15_Clinical_Image_MCQs"],
+['باطنية','نظري','lec11','ACS (lec 4)','دكتور علي عبد الكريم',"lec 4 ACS…"],
+['أطفال','نظري','ملحق','Infectious diseases study topics','',"Infectious_Diseases_Study_Topics"],
+['أطفال','نظري','ملحق','Guidelines CDC','',"Guidelines CDC"],
+['أطفال','نظري','lec3','Bacterial infections','دكتورة دعاء',"Bacterial infections"],
+['جراحة','نظري','lec19','Lecture 2','دكتور قاسم',"Lecture 2 – Copy"],
+['جراحة','نظري','lec4','Lecture 1','دكتور قاسم',"Lecture 1 – Copy"]
 ];
 const num = l => { const m = /(\d+)/.exec(l||''); return m ? +m[1] : 999; };
-const L = DATA.map(([department,kind,lec,title,orig],n) => ({id:'m'+(n+1),department,kind,lec,title,n,orig:[].concat(orig||[])}))
+const L = DATA.map(([department,kind,lec,title,doctor,orig],n) => ({id:'m'+(n+1),department,kind,lec,title,doctor,n,orig:[].concat(orig||[])}))
   .sort((a,b) => SUBJ.indexOf(a.department)-SUBJ.indexOf(b.department) || (a.kind==='عملي')-(b.kind==='عملي') || num(a.lec)-num(b.lec) || a.n-b.n);
 
+const DOCS = [...new Set(L.map(i=>i.doctor).filter(Boolean))].sort((a,b)=>a.localeCompare(b,'ar'));
 const Storage = {
   get:(k,id,d)=>{ try{ return localStorage.getItem(`${k}_${id}`)||d; }catch(e){ return mem[`${k}_${id}`]||d; } },
   set:(k,id,v)=>{ try{ localStorage.setItem(`${k}_${id}`,v); }catch(e){ mem[`${k}_${id}`]=v; } },
@@ -306,21 +309,21 @@ document.addEventListener('click', e => {
   if (a==='st') { const prev=Storage.get('status',id,'none'); Storage.set('status',id,v); if(v!=='none' && v!==prev) toast(MSG[v]); }
   else if (a==='mcq') { if (Storage.toggle('mcq',id)) toast(MSG.mcq); }
   else if (a==='todo') Storage.toggle('todo',id);
-  else if (a==='clr') { ['filter-dept','filter-kind','filter-status'].forEach(i=>$(i).value='all'); $('group-by').value='department'; $('search-input').value=''; }
+  else if (a==='clr') { ['filter-dept','filter-doc','filter-kind','filter-status'].forEach(i=>$(i).value='all'); $('group-by').value='department'; $('search-input').value=''; }
   render();
 });
 
 function setupFilters() {
   const fill = (id,arr,label) => $(id).innerHTML = `<option value="all">كل ${label}</option>` + arr.map(v=>`<option value="${esc(v)}">${esc(v)}</option>`).join('');
-  fill('filter-dept',SUBJ,'المواد'); fill('filter-kind',['نظري','عملي'],'الأنواع');
-  ['search-input','filter-dept','filter-kind','filter-status','group-by'].forEach(id =>
+  fill('filter-dept',SUBJ,'المواد'); fill('filter-kind',['نظري','عملي'],'الأنواع'); fill('filter-doc',DOCS,'الدكاترة');
+  ['search-input','filter-dept','filter-doc','filter-kind','filter-status','group-by'].forEach(id =>
     $(id).addEventListener(id==='search-input'?'input':'change', render));
 }
 function filtered() {
-  const q=$('search-input').value.toLowerCase().trim(), dep=$('filter-dept').value, kd=$('filter-kind').value, st=$('filter-status').value;
+  const q=$('search-input').value.toLowerCase().trim(), dep=$('filter-dept').value, dc=$('filter-doc').value, kd=$('filter-kind').value, st=$('filter-status').value;
   return L.filter(i =>
-    (i.title+' '+i.department+' '+i.lec).toLowerCase().includes(q) &&
-    (dep==='all'||i.department===dep) && (kd==='all'||i.kind===kd) &&
+    (i.title+' '+i.department+' '+i.lec+' '+i.doctor).toLowerCase().includes(q) &&
+    (dep==='all'||i.department===dep) && (dc==='all'||i.doctor===dc) && (kd==='all'||i.kind===kd) &&
     (st==='all'||Storage.get('status',i.id,'none')===st));
 }
 
@@ -334,6 +337,7 @@ function card(i) {
       <span class="chip dep">${esc(i.department)}</span>
       <span class="chip">${esc(i.kind)}</span>
       ${i.lec?`<span class="chip"><bdi>${esc(i.lec)}</bdi></span>`:''}
+      ${i.doctor?`<span class="chip">${ic('user')}${esc(i.doctor)}</span>`:''}
     </div><button class="ib${td?' on':''}" data-a="todo" data-id="${id}" aria-pressed="${td}" title="تثبيت في المهام">${ic('pin')}</button></div>
     <h3 dir="auto"${has?` class="lk" data-a="open" data-id="${id}" title="فتح الملف"`:''}>${esc(i.title)}</h3>
     <div class="act">
@@ -349,7 +353,7 @@ function rList() {
   if (!f.length) return $('list').innerHTML = empty('search','لا توجد نتائج. جرّبي تغيير البحث أو مسح الفلاتر.');
   if (g==='none') return $('list').innerHTML = f.map(card).join('');
   const groups = {};
-  f.forEach(i => (groups[i[g]] ||= []).push(i));
+  f.forEach(i => (groups[i[g]||'غير محدد'] ||= []).push(i));
   $('list').innerHTML = Object.keys(groups).map(n =>
     `<div><h2 class="gh">${esc(n)}<em>${groups[n].length}</em></h2><div class="list">${groups[n].map(card).join('')}</div></div>`).join('');
 }
@@ -373,7 +377,7 @@ function stats() {
   const pill = (c,l,n) => `<span><i style="--c:${c}"></i>${l} <b>${n}</b></span>`;
   $('pills').innerHTML = pill('var(--s0)','لم تُقرأ',none)+pill('var(--s1)','مرة',once)+pill('var(--s2)','مرتين',twice)+pill('var(--s3)','3 مرات',thrice)+pill('var(--pr)','MCQs',mcq);
   $('n-todo').textContent = todo||'';
-  const n = ['filter-dept','filter-kind','filter-status'].filter(i=>$(i).value!=='all').length + ($('group-by').value!=='department');
+  const n = ['filter-dept','filter-doc','filter-kind','filter-status'].filter(i=>$(i).value!=='all').length + ($('group-by').value!=='department');
   $('fbadge').textContent = n||'';
 }
 function render() { ({list:rList,todo:rTodo})[view](); stats(); fstats(); }
